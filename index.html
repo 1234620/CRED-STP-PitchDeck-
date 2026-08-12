@@ -1,19 +1,1179 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CRED — Segmentation, Targeting, Positioning</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRED — Segmentation, Targeting, Positioning</title>
+  <meta name="description" content="A pitch deck analyzing CRED's Segmentation, Targeting, and Positioning strategy through its iconic IPL campaign featuring Rahul Dravid.">
+  <meta property="og:title" content="CRED — Segmentation, Targeting, Positioning">
+  <meta property="og:description" content="Analyzing CRED's STP strategy through its iconic Rahul Dravid IPL campaign.">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='4' fill='%230C0C0D' stroke='%23B8934A' stroke-width='1.5'/><text x='16' y='22' text-anchor='middle' font-family='Georgia,serif' font-size='18' font-weight='600' fill='%23B8934A'>C</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    /* ── Tokens ──────────────────────────────────────── */
+    :root {
+      --ink:       #0C0C0D;
+      --bone:      #EAE6DD;
+      --bonemute:  #8B8880;
+      --brass:     #B8934A;
+      --brass-dim: #8A6E38;
+      --rust:      #C4491F;
+      --line:      #2A2A2A;
+      --font-display: 'Fraunces', Georgia, serif;
+      --font-mono:    'IBM Plex Mono', 'Courier New', monospace;
+      color-scheme: dark;
+    }
+
+    /* ── Reset ───────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      background: var(--ink);
+      overflow: hidden;
+    }
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overscroll-behavior: none;
+    }
+    :focus-visible {
+      outline: 2px solid var(--brass);
+      outline-offset: 3px;
+    }
+    button { font: inherit; background: none; border: none; cursor: pointer; }
+
+    /* ── App Shell ────────────────────────────────────── */
+    .app {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      user-select: none;
+      cursor: pointer;
+    }
+
+    /* ── Background Ledger ────────────────────────────── */
+    .bg-ledger {
+      position: fixed; inset: 0; z-index: 0;
+      pointer-events: none;
+    }
+    .bg-ledger-lines {
+      position: absolute; inset: 0;
+      opacity: 0.05;
+      background-image: repeating-linear-gradient(
+        to bottom,
+        var(--brass) 0px, var(--brass) 1px,
+        transparent 1px, transparent 40px
+      );
+    }
+    .bg-ledger-vignette {
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 45%, rgba(0,0,0,0.55) 100%);
+    }
+
+    /* ── Film Grain Overlay ──────────────────────────── */
+    .grain {
+      position: fixed; inset: 0;
+      pointer-events: none;
+      z-index: 30;
+      opacity: 0.035;
+      mix-blend-mode: overlay;
+    }
+    .grain::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      width: 100%; height: 100%;
+      filter: url(#noise-filter);
+    }
+
+    /* ── Corner Frames ───────────────────────────────── */
+    .corner {
+      position: fixed;
+      width: 22px; height: 22px;
+      pointer-events: none;
+      z-index: 20;
+      opacity: 0.55;
+    }
+    .corner-tl { top: 1rem; left: 1rem; border-top: 1px solid var(--brass); border-left: 1px solid var(--brass); }
+    .corner-tr { top: 1rem; right: 1rem; border-top: 1px solid var(--brass); border-right: 1px solid var(--brass); }
+    .corner-bl { bottom: 1rem; left: 1rem; border-bottom: 1px solid var(--brass); border-left: 1px solid var(--brass); }
+    .corner-br { bottom: 1rem; right: 1rem; border-bottom: 1px solid var(--brass); border-right: 1px solid var(--brass); }
+
+    /* ── Slide Container ─────────────────────────────── */
+    .slide-wrapper {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+      z-index: 5;
+      overflow: hidden;
+      transition: opacity 0.32s ease-out, transform 0.32s ease-out;
+    }
+
+    /* ── Background Numeral ──────────────────────────── */
+    .bg-numeral {
+      position: absolute;
+      right: -2vw; bottom: -8vh;
+      font-family: var(--font-display);
+      font-size: min(60vw, 60vh);
+      color: var(--bone);
+      opacity: 0.035;
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      z-index: 0;
+    }
+
+    /* ── CRED Logo Watermark ─────────────────────────── */
+    .cred-watermark {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(65vw, 65vh);
+      height: auto;
+      opacity: 0.08;
+      pointer-events: none;
+      user-select: none;
+      z-index: 1;
+    }
+
+    /* ── Slide Typography ────────────────────────────── */
+    .slide-inner {
+      position: relative;
+      z-index: 5;
+      display: flex; flex-direction: column;
+      align-items: center;
+      max-width: 56rem;
+    }
+    .slide-eyebrow {
+      display: flex; align-items: center; gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 16px;
+      letter-spacing: 0.3em;
+      color: var(--brass);
+    }
+    .slide-eyebrow .num { color: var(--bonemute); }
+    .slide-headline {
+      font-family: var(--font-display);
+      color: var(--bone);
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      line-height: 1.15;
+      max-width: 48rem;
+      font-weight: 600;
+    }
+    .slide-headline-lg {
+      font-size: clamp(2.6rem, 6.5vw, 4.6rem);
+    }
+    .slide-support {
+      margin-top: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.06em;
+      color: var(--bonemute);
+    }
+
+    /* ── Hook Slide Background ───────────────────────── */
+    .hook-bg {
+      position: absolute; inset: 0;
+      z-index: 0;
+      background: radial-gradient(ellipse at center, rgba(184,147,74,0.04) 0%, transparent 70%);
+    }
+
+    /* ── Hook Media Row (video + cartoon) ─────────────── */
+    .hook-media-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-top: 2rem;
+      width: 100%;
+      max-width: 54rem;
+      flex-wrap: wrap;
+    }
+    .hook-video-wrap {
+      position: relative;
+      flex: 1 1 100%;
+      min-width: 280px;
+      max-width: 50rem;
+      aspect-ratio: 16 / 9;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      border-radius: 2px;
+      background: #000;
+    }
+    .hook-video-wrap:hover { border-color: var(--brass-dim); }
+    .hook-video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .hook-video-poster {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(12,12,13,0.35);
+      cursor: pointer;
+      transition: background 0.3s;
+      z-index: 2;
+    }
+    .hook-video-poster:hover { background: rgba(12,12,13,0.15); }
+    .hook-video-poster.hidden { display: none; }
+    .hook-cartoon-wrap {
+      flex: 0 1 auto;
+      max-width: 220px;
+      min-width: 160px;
+      border: 1px solid var(--line);
+      border-radius: 2px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s ease 0.3s, transform 0.5s ease 0.3s;
+    }
+    .hook-cartoon-wrap.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .hook-cartoon {
+      width: 100%; height: auto;
+      display: block;
+      filter: contrast(1.1);
+    }
+
+    /* ── Video Facade ────────────────────────────────── */
+    .video-facade {
+      position: relative;
+      aspect-ratio: 16 / 9;
+      width: 100%;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      cursor: pointer;
+    }
+    .video-facade:hover { border-color: var(--brass-dim); }
+    .video-thumb {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      filter: grayscale(30%);
+      transition: filter 0.3s ease;
+    }
+    .video-facade:hover .video-thumb { filter: grayscale(0%); }
+    .video-overlay {
+      position: absolute; inset: 0;
+      background: rgba(12,12,13,0.25);
+      transition: background 0.3s;
+    }
+    .video-facade:hover .video-overlay { background: rgba(12,12,13,0.1); }
+    .video-play-btn {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2;
+    }
+    .play-circle {
+      width: 3.5rem; height: 3.5rem;
+      border-radius: 50%;
+      border: 1px solid var(--brass);
+      background: rgba(12,12,13,0.7);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .video-facade:hover .play-circle { transform: scale(1.08); }
+    .play-triangle {
+      width: 0; height: 0;
+      margin-left: 3px;
+      border-top: 8px solid transparent;
+      border-bottom: 8px solid transparent;
+      border-left: 13px solid var(--brass);
+    }
+    .video-iframe {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%;
+      border: none;
+    }
+    .video-close { max-width: 28rem; margin-top: 2rem; }
+
+    /* ── Credit Gauge ────────────────────────────────── */
+    .gauge-wrap { width: 100%; max-width: 36rem; margin-top: 2.5rem; }
+    .gauge-range {
+      display: flex; justify-content: space-between;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--bonemute);
+      margin-bottom: 0.5rem;
+    }
+    .gauge-track {
+      position: relative;
+      height: 3px;
+      background: var(--line);
+    }
+    .gauge-fill {
+      position: absolute; top: 0; bottom: 0;
+      left: 75%; width: 0;
+      background: var(--brass);
+      transition: width 0.9s ease-out 0.3s;
+    }
+    .gauge-fill.active { width: 25%; }
+    .gauge-marker {
+      position: absolute;
+      top: -7px; left: 75%;
+      width: 2px; height: 17px;
+      background: var(--bone);
+      opacity: 0;
+      transition: opacity 0.3s ease 0.15s;
+    }
+    .gauge-marker.active { opacity: 1; }
+    .gauge-label {
+      margin-top: 0.5rem;
+      margin-left: 75%;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--brass);
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.3s ease 0.15s, transform 0.3s ease 0.15s;
+    }
+    .gauge-label.active { opacity: 1; transform: translateY(0); }
+
+    /* ── Targeting Badges ────────────────────────────── */
+    .target-badges {
+      display: flex; gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .target-badge {
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--line);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--bonemute);
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.4s ease, transform 0.4s ease;
+    }
+    .target-badge.active { opacity: 1; transform: translateY(0); }
+    .target-badge .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--brass);
+    }
+    .target-badge:nth-child(2) { transition-delay: 0.15s; }
+    .target-badge:nth-child(3) { transition-delay: 0.3s; }
+
+    /* ── Membership Card ─────────────────────────────── */
+    .member-card {
+      width: 280px;
+      aspect-ratio: 1.586;
+      border: 1px solid var(--brass-dim);
+      background: rgba(12,12,13,0.8);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+    }
+    .member-card.active { opacity: 1; transform: translateY(0); }
+    .member-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at top right, rgba(184,147,74,0.07), transparent 70%);
+      pointer-events: none;
+    }
+    .member-card-brand {
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      letter-spacing: 0.35em;
+      color: var(--bone);
+      opacity: 0.85;
+    }
+    .member-card-label {
+      display: flex; align-items: center; gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: var(--brass);
+    }
+    .member-card-label .dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: var(--brass);
+    }
+    .member-card-sub {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--bonemute);
+      opacity: 0.6;
+    }
+
+    /* ── USP Contrast Visual ─────────────────────────── */
+    .usp-contrast {
+      display: flex; align-items: center; gap: 2rem;
+      margin-top: 2.5rem;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.5s ease 0.2s, transform 0.5s ease 0.2s;
+    }
+    .usp-contrast.active { opacity: 1; transform: translateY(0); }
+    .usp-side {
+      display: flex; flex-direction: column;
+      align-items: center; gap: 0.35rem;
+    }
+    .usp-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--bonemute);
+      opacity: 0.5;
+    }
+    .usp-word {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      letter-spacing: 0.15em;
+    }
+    .usp-word-muted {
+      color: var(--bonemute);
+      text-decoration: line-through;
+      text-decoration-color: var(--rust);
+      text-decoration-thickness: 1.5px;
+    }
+    .usp-word-brass {
+      color: var(--brass);
+      font-weight: 500;
+    }
+    .usp-divider {
+      width: 1px; height: 3rem;
+      background: var(--line);
+    }
+
+    /* ── Title Slide ──────────────────────────────────── */
+    .title-layout {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 3rem;
+      width: 100%;
+      max-width: 60rem;
+      margin-top: 0.5rem;
+    }
+    .title-text {
+      flex: 1 1 45%;
+      display: flex; flex-direction: column;
+      align-items: flex-start;
+      text-align: left;
+      gap: 0.5rem;
+    }
+    .title-topic {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--brass);
+      margin-bottom: 0.5rem;
+    }
+    .title-name {
+      font-family: var(--font-display);
+      font-size: clamp(2.6rem, 5.5vw, 4rem);
+      color: var(--bone);
+      font-weight: 600;
+      line-height: 1.15;
+    }
+    .title-roll {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: var(--bonemute);
+      margin-top: 0.25rem;
+    }
+    .title-subject {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 2vw, 1.4rem);
+      color: var(--bonemute);
+      font-weight: 400;
+      margin-top: 0.75rem;
+      opacity: 0.7;
+    }
+    .title-divider {
+      width: 3rem; height: 1px;
+      background: var(--brass);
+      margin: 0.75rem 0;
+      opacity: 0.6;
+    }
+    .title-cartoon-wrap {
+      flex: 0 1 auto;
+      max-width: 480px;
+      min-width: 280px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(12px) scale(0.97);
+      transition: opacity 0.6s ease 0.25s, transform 0.6s ease 0.25s;
+      box-shadow: 0 4px 30px rgba(0,0,0,0.3);
+    }
+    .title-cartoon-wrap.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .title-cartoon-wrap img {
+      width: 100%; height: auto;
+      display: block;
+    }
+    @media (max-width: 640px) {
+      .title-layout {
+        flex-direction: column-reverse;
+        gap: 1.5rem;
+      }
+      .title-text { align-items: center; text-align: center; }
+      .title-cartoon-wrap { max-width: 360px; }
+    }
+
+    /* ── Presenter Notes ─────────────────────────────── */
+    .presenter-notes {
+      position: fixed;
+      left: 0; right: 0; bottom: 3.5rem;
+      display: flex; justify-content: center;
+      padding: 0 1.5rem;
+      pointer-events: none;
+      z-index: 25;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .presenter-notes.visible { opacity: 1; transform: translateY(0); }
+    .presenter-notes-inner {
+      max-width: 36rem;
+      border: 1px solid var(--line);
+      background: rgba(12,12,13,0.95);
+      padding: 1rem 1.25rem;
+    }
+    .notes-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      color: var(--brass);
+      margin-bottom: 0.5rem;
+    }
+    .notes-text {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      line-height: 1.65;
+      color: var(--bonemute);
+    }
+
+    /* ── Timer ────────────────────────────────────────── */
+    .timer-display {
+      position: fixed;
+      top: 1.25rem; right: 1.5rem;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--bonemute);
+      font-variant-numeric: tabular-nums;
+      z-index: 25;
+      cursor: default;
+    }
+    .timer-sep { color: var(--line); margin: 0 0.5rem; }
+    .timer-hint {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+    .timer-display:hover .timer-hint { opacity: 0.6; }
+
+    /* ── Navigation Buttons ──────────────────────────── */
+    .nav-controls {
+      position: fixed;
+      bottom: 3.5rem; right: 1.5rem;
+      display: flex; gap: 0.5rem;
+      z-index: 25;
+    }
+    .nav-btn {
+      padding: 0.25rem 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--bonemute);
+      border: 1px solid var(--line);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .nav-btn:hover:not(:disabled) { border-color: var(--brass); color: var(--brass); }
+    .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+    /* ── Progress Bar ────────────────────────────────── */
+    .progress-bar {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      display: flex; align-items: center; gap: 1rem;
+      padding: 0.75rem 1.5rem;
+      z-index: 25;
+    }
+    .progress-segments {
+      flex: 1;
+      display: flex; gap: 3px;
+    }
+    .progress-seg {
+      height: 2px;
+      flex: 1;
+      background: var(--line);
+      overflow: hidden;
+    }
+    .progress-seg-fill {
+      height: 100%;
+      background: var(--brass);
+      width: 0;
+      transition: width 0.5s ease-out;
+    }
+    .progress-seg-fill.filled { width: 100%; }
+    .progress-counter {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--bonemute);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    /* ── Responsive (Desktop) ────────────────────────── */
+    @media (min-width: 768px) {
+      .slide-wrapper { padding: 1.5rem 4rem; }
+      .corner-tl { top: 1.5rem; left: 1.5rem; }
+      .corner-tr { top: 1.5rem; right: 1.5rem; }
+      .corner-bl { bottom: 1.5rem; left: 1.5rem; }
+      .corner-br { bottom: 1.5rem; right: 1.5rem; }
+      .timer-display { top: 2rem; right: 2.5rem; }
+      .nav-controls { right: 2.5rem; bottom: 4rem; }
+      .progress-bar { padding: 1rem 2.5rem; }
+      .presenter-notes { bottom: 4.5rem; padding: 0 2.5rem; }
+      .play-circle { width: 4rem; height: 4rem; }
+      .play-triangle {
+        border-top-width: 9px;
+        border-bottom-width: 9px;
+        border-left-width: 14px;
+      }
+      .slide-support { font-size: 14px; }
+    }
+
+    /* ── Reduced Motion ──────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SVG filter for film grain -->
+  <svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true">
+    <defs>
+      <filter id="noise-filter">
+        <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/>
+      </filter>
+    </defs>
+  </svg>
+
+  <div class="app" id="app">
+    <!-- Background texture -->
+    <div class="bg-ledger" aria-hidden="true">
+      <div class="bg-ledger-lines"></div>
+      <div class="bg-ledger-vignette"></div>
+    </div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <!-- Corner decorations -->
+    <div class="corner corner-tl" aria-hidden="true"></div>
+    <div class="corner corner-tr" aria-hidden="true"></div>
+    <div class="corner corner-bl" aria-hidden="true"></div>
+    <div class="corner corner-br" aria-hidden="true"></div>
+
+    <!-- CRED logo watermark -->
+    <img class="cred-watermark" src="cred_logo_clean.png" alt="" aria-hidden="true">
+
+    <!-- Slide content (rendered by JS) -->
+    <div class="slide-wrapper" id="slide-wrapper"></div>
+
+    <!-- Timer -->
+    <div class="timer-display" id="timer-el" onclick="event.stopPropagation()">
+      <span id="timer-value">0.0</span>s
+      <span class="timer-sep">·</span>
+      <span class="timer-hint">R reset · N notes</span>
+    </div>
+
+    <!-- Presenter notes -->
+    <div class="presenter-notes" id="notes-el">
+      <div class="presenter-notes-inner">
+        <p class="notes-label">SAY (press N to hide)</p>
+        <p class="notes-text" id="notes-text"></p>
+      </div>
+    </div>
+
+    <!-- Navigation buttons -->
+    <div class="nav-controls" onclick="event.stopPropagation()">
+      <button class="nav-btn" id="btn-prev" aria-label="Previous slide" onclick="goPrev()">←</button>
+      <button class="nav-btn" id="btn-next" aria-label="Next slide" onclick="goNext()">→</button>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="progress-bar" id="progress-el" onclick="event.stopPropagation()"></div>
+  </div>
+
+  <script>
+    // ─── Constants ─────────────────────────────────────
+    const YOUTUBE_ID = 'j8KpV-4_mRg';
+    const THUMB_URL = `https://img.youtube.com/vi/${YOUTUBE_ID}/maxresdefault.jpg`;
+
+    // ─── Slide Data ────────────────────────────────────
+    const slides = [
+      {
+        eyebrow: null,
+        concept: null,
+        headline: 'CRED',
+        support: null,
+        variant: 'title',
+        notes: 'Title slide — introduce yourself and the topic.'
+      },
+      {
+        eyebrow: null,
+        concept: null,
+        headline: 'Why does a payments app act like this?',
+        support: 'CRED · IPL campaign, ft. Rahul Dravid',
+        variant: 'hookMedia',
+        notes: "Why does a bill-payment app cast Rahul Dravid as a road-rage maniac? Because CRED isn't really selling payments."
+      },
+      {
+        eyebrow: '03',
+        concept: 'SEGMENTATION',
+        headline: 'Not everyone with a credit card. Only the ones who already pay on time.',
+        support: '750+ credit score required',
+        variant: 'gauge',
+        notes: "Segmentation — splitting the market into groups. CRED ignores most of India's credit card users and isolates just one slice: people who already pay their bills on time, with a credit score of 750 or higher."
+      },
+      {
+        eyebrow: '04',
+        concept: 'TARGETING',
+        headline: 'Low risk. High value. Exactly who CRED can lend to later.',
+        support: 'The filter doubles as an underwriting signal',
+        variant: 'targeting',
+        notes: "Targeting — CRED goes after that segment specifically because low-risk, credit-disciplined users are exactly who CRED can lend to later, and exactly who premium brand partners want to reach."
+      },
+      {
+        eyebrow: '05',
+        concept: 'POSITIONING',
+        headline: "Not an app you download. A club you qualify for.",
+        support: 'Membership over utility',
+        variant: 'positioning',
+        notes: "Positioning — CRED wants one idea to live in your head: you don't download this app, you qualify for it. It's a club for the financially responsible, not a utility for everyone."
+      },
+      {
+        eyebrow: '06',
+        concept: 'USP',
+        headline: 'Every fintech competes on convenience. CRED competes on exclusivity.',
+        support: 'Creditworthiness, turned into status',
+        variant: 'usp',
+        notes: "So the USP: every other fintech competes on convenience or cashback. CRED competes on exclusivity — it's the only one where being good with money is the actual product you're showing off."
+      },
+      {
+        eyebrow: null,
+        concept: null,
+        headline: "The contrast only lands if you already get the joke.",
+        support: "That's not an accident. That's the target.",
+        variant: 'videoClose',
+        notes: "That's why the Dravid ad works — the contrast only lands on people who already get the joke. That's not an accident. That's the target."
+      }
+    ];
+
+    // ─── State ─────────────────────────────────────────
+    let current = 0;
+    let showNotes = false;
+    let running = false;
+    let startTime = null;
+    let elapsed = 0;
+    let timerInterval = null;
+    let isTransitioning = false;
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    // ─── Rendering ─────────────────────────────────────
+    function renderSlide() {
+      const slide = slides[current];
+      const wrapper = document.getElementById('slide-wrapper');
+      let html = '';
+
+      // Background numeral
+      if (slide.eyebrow) {
+        html += `<div class="bg-numeral" aria-hidden="true">${slide.eyebrow}</div>`;
+      }
+
+      // Hook background (slide 1)
+      if (slide.variant === 'hookMedia') {
+        html += `<div class="hook-bg" aria-hidden="true"></div>`;
+      }
+
+      // Content
+      html += '<div class="slide-inner">';
+
+      // Eyebrow
+      if (slide.concept) {
+        html += `
+          <div class="slide-eyebrow">
+            ${slide.eyebrow ? `<span class="num">${slide.eyebrow}</span>` : ''}
+            <span>${slide.concept}</span>
+          </div>`;
+      }
+
+      // Headline
+      const headlineClass = slide.variant === 'videoClose' ? 'slide-headline slide-headline-lg' : 'slide-headline';
+      html += `<h1 class="${headlineClass}">${slide.headline}</h1>`;
+
+      // Support text
+      if (slide.support) {
+        html += `<p class="slide-support">${slide.support}</p>`;
+      }
+
+      // Variant-specific visuals
+      switch (slide.variant) {
+        case 'title':
+          html += renderTitleSlide();
+          break;
+        case 'hookMedia':
+          html += renderHookMedia();
+          break;
+        case 'gauge':
+          html += renderGauge();
+          break;
+        case 'targeting':
+          html += renderTargetingBadges();
+          break;
+        case 'positioning':
+          html += renderMembershipCard();
+          break;
+        case 'usp':
+          html += renderUSPContrast();
+          break;
+        case 'videoClose':
+          html += renderVideoFacade('video-close', 'video-close');
+          break;
+      }
+
+      html += '</div>';
+      wrapper.innerHTML = html;
+
+      // Post-render animations (staggered entrance)
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          if (slide.variant === 'title') {
+            activateAll('.title-cartoon-wrap');
+          }
+          else if (slide.variant === 'hookMedia') {
+            // cartoon removed per user request
+          } else if (slide.variant === 'gauge') {
+            activateAll('.gauge-fill', '.gauge-marker', '.gauge-label');
+          } else if (slide.variant === 'targeting') {
+            activateAll('.target-badge');
+          } else if (slide.variant === 'positioning') {
+            activateAll('.member-card');
+          } else if (slide.variant === 'usp') {
+            activateAll('.usp-contrast');
+          }
+        });
+      });
+    }
+
+    function activateAll(...selectors) {
+      selectors.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => el.classList.add('active'));
+      });
+    }
+
+    function renderTitleSlide() {
+      return `
+        <div class="title-layout">
+          <div class="title-text">
+            <div class="title-topic">SEGMENTATION · TARGETING · POSITIONING</div>
+            <div class="title-divider"></div>
+            <div class="title-name">Ahmed Moosani</div>
+            <div class="title-roll">R023</div>
+            <div class="title-subject">Case Study — CRED</div>
+          </div>
+          <div class="title-cartoon-wrap">
+            <img src="credit_card.webp" alt="Credit card bill cartoon">
+          </div>
+        </div>`;
+    }
+
+    function renderHookMedia() {
+      return `
+        <div class="hook-media-row" onclick="event.stopPropagation()">
+          <div class="hook-video-wrap">
+            <video class="hook-video" id="hook-video" preload="metadata" playsinline>
+              <source src="video.mp4" type="video/mp4">
+            </video>
+            <div class="hook-video-poster" id="hook-poster" onclick="playHookVideo()">
+              <div class="play-circle">
+                <div class="play-triangle"></div>
+              </div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function playHookVideo() {
+      const video = document.getElementById('hook-video');
+      const poster = document.getElementById('hook-poster');
+      if (!video || !poster) return;
+      poster.classList.add('hidden');
+      video.controls = true;
+      video.play();
+    }
+
+    function renderVideoFacade(id, sizeClass) {
+      return `
+        <div class="${sizeClass}" onclick="event.stopPropagation()">
+          <div class="video-facade" id="${id}">
+            <img class="video-thumb" src="${THUMB_URL}" alt="CRED ad still, ft. Rahul Dravid">
+            <div class="video-overlay"></div>
+            <button class="video-play-btn" onclick="playVideo('${id}')" aria-label="Play the CRED / Rahul Dravid ad">
+              <div class="play-circle">
+                <div class="play-triangle"></div>
+              </div>
+            </button>
+          </div>
+        </div>`;
+    }
+
+    function playVideo(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = `<iframe class="video-iframe" src="https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1&rel=0" title="CRED — Great for the Good, ft. Rahul Dravid" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    }
+
+    function renderGauge() {
+      return `
+        <div class="gauge-wrap">
+          <div class="gauge-range">
+            <span>300</span>
+            <span>900</span>
+          </div>
+          <div class="gauge-track">
+            <div class="gauge-fill"></div>
+            <div class="gauge-marker"></div>
+          </div>
+          <div class="gauge-label">750 — CRED's line</div>
+        </div>`;
+    }
+
+    function renderTargetingBadges() {
+      return `
+        <div class="target-badges">
+          <div class="target-badge">
+            <span class="dot"></span>
+            LOW RISK
+          </div>
+          <div class="target-badge">
+            <span class="dot"></span>
+            HIGH VALUE
+          </div>
+          <div class="target-badge">
+            <span class="dot"></span>
+            LENDABLE
+          </div>
+        </div>`;
+    }
+
+    function renderMembershipCard() {
+      return `
+        <div class="member-card">
+          <div class="member-card-brand">CRED</div>
+          <div class="member-card-label">
+            <span class="dot"></span>
+            MEMBER
+          </div>
+          <div class="member-card-sub">since you qualified</div>
+        </div>`;
+    }
+
+    function renderUSPContrast() {
+      return `
+        <div class="usp-contrast">
+          <div class="usp-side">
+            <span class="usp-label">EVERY FINTECH</span>
+            <span class="usp-word usp-word-muted">CONVENIENCE</span>
+          </div>
+          <div class="usp-divider"></div>
+          <div class="usp-side">
+            <span class="usp-label">CRED</span>
+            <span class="usp-word usp-word-brass">EXCLUSIVITY</span>
+          </div>
+        </div>`;
+    }
+
+    // ─── Progress Bar ──────────────────────────────────
+    function renderProgress() {
+      const el = document.getElementById('progress-el');
+      let html = '<div class="progress-segments">';
+      for (let i = 0; i < slides.length; i++) {
+        html += `<div class="progress-seg"><div class="progress-seg-fill${i <= current ? ' filled' : ''}"></div></div>`;
+      }
+      html += '</div>';
+      html += `<span class="progress-counter">${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}</span>`;
+      el.innerHTML = html;
+    }
+
+    function updateProgress() {
+      const fills = document.querySelectorAll('.progress-seg-fill');
+      fills.forEach((f, i) => {
+        if (i <= current) f.classList.add('filled');
+        else f.classList.remove('filled');
+      });
+      const counter = document.querySelector('.progress-counter');
+      if (counter) counter.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    }
+
+    // ─── Presenter Notes ───────────────────────────────
+    function updateNotes() {
+      const el = document.getElementById('notes-el');
+      const textEl = document.getElementById('notes-text');
+      textEl.textContent = slides[current].notes;
+      if (showNotes) el.classList.add('visible');
+      else el.classList.remove('visible');
+    }
+
+    function toggleNotes() {
+      showNotes = !showNotes;
+      updateNotes();
+    }
+
+    // ─── Timer ─────────────────────────────────────────
+    function startTimer() {
+      if (running) return;
+      running = true;
+      startTime = Date.now();
+      timerInterval = setInterval(() => {
+        elapsed = (Date.now() - startTime) / 1000;
+        document.getElementById('timer-value').textContent = elapsed.toFixed(1);
+      }, 200);
+    }
+
+    function resetTimer() {
+      running = false;
+      elapsed = 0;
+      startTime = null;
+      if (timerInterval) clearInterval(timerInterval);
+      timerInterval = null;
+      document.getElementById('timer-value').textContent = '0.0';
+      // Restart immediately
+      startTimer();
+    }
+
+    // ─── Navigation ────────────────────────────────────
+    function goNext() {
+      goToSlide(current + 1, 'forward');
+    }
+
+    function goPrev() {
+      goToSlide(current - 1, 'backward');
+    }
+
+    function goToSlide(newIndex, direction) {
+      if (isTransitioning || newIndex === current || newIndex < 0 || newIndex >= slides.length) return;
+      isTransitioning = true;
+
+      const wrapper = document.getElementById('slide-wrapper');
+      const exitY = direction === 'forward' ? '-14px' : '14px';
+      const enterY = direction === 'forward' ? '14px' : '-14px';
+
+      // Phase 1: Exit
+      wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+      wrapper.style.opacity = '0';
+      wrapper.style.transform = `translateY(${exitY})`;
+
+      setTimeout(() => {
+        current = newIndex;
+        renderSlide();
+        renderProgress();
+        updateNotes();
+        updateNavButtons();
+
+        // Auto-start timer on slide 2
+        if (current === 2 && !running) startTimer();
+
+        // Position for entry (no transition)
+        wrapper.style.transition = 'none';
+        wrapper.style.opacity = '0';
+        wrapper.style.transform = `translateY(${enterY})`;
+
+        // Force reflow, then animate in
+        wrapper.offsetHeight;
+
+        wrapper.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+        wrapper.style.opacity = '1';
+        wrapper.style.transform = 'translateY(0)';
+
+        setTimeout(() => { isTransitioning = false; }, 320);
+      }, 320);
+    }
+
+    function updateNavButtons() {
+      document.getElementById('btn-prev').disabled = current === 0;
+      document.getElementById('btn-next').disabled = current === slides.length - 1;
+    }
+
+    // ─── Keyboard ──────────────────────────────────────
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        goNext();
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goPrev();
+      } else if (e.key.toLowerCase() === 'n') {
+        toggleNotes();
+      } else if (e.key.toLowerCase() === 'r') {
+        resetTimer();
+      }
+    });
+
+    // ─── Click to Advance ──────────────────────────────
+    document.getElementById('app').addEventListener('click', (e) => {
+      // Only advance if click is on the app background, not on interactive children
+      if (e.target.closest('.nav-controls, .video-facade, .video-hook, .video-close, .timer-display, .progress-bar, .presenter-notes')) return;
+      goNext();
+    });
+
+    // ─── Touch / Swipe ─────────────────────────────────
+    document.addEventListener('touchstart', (e) => {
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      const dx = e.changedTouches[0].screenX - touchStartX;
+      const dy = e.changedTouches[0].screenY - touchStartY;
+      // Only swipe if horizontal distance > vertical distance and > 50px threshold
+      if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+        if (dx < 0) goNext();
+        else goPrev();
+      }
+    }, { passive: true });
+
+    // ─── Init ──────────────────────────────────────────
+    renderSlide();
+    renderProgress();
+    updateNotes();
+    updateNavButtons();
+  </script>
+</body>
 </html>
